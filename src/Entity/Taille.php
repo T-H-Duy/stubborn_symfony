@@ -2,120 +2,108 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Repository\TailleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+#[ORM\Entity(repositoryClass: TailleRepository::class)]
+class Taille
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
-    private ?string $email = null;
+    #[ORM\Column(length: 255)]
+    private ?string $nom = null;
 
-    #[ORM\Column]
-    private array $roles = [];
+    #[ORM\OneToMany(targetEntity: Stock::class, mappedBy: 'taille')]
+    private Collection $stocks;
 
-    /**
-     * @var string The hashed password
-     */
-    #[ORM\Column]
-    private ?string $password = null;
+    #[ORM\OneToMany(targetEntity: CommandeProduit::class, mappedBy: 'taille')]
+    private Collection $commandeProduits;
 
-    #[ORM\Column]
-    private bool $isVerified = false;
+    public function __construct()
+    {
+        $this->stocks = new ArrayCollection();
+        $this->commandeProduits = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getEmail(): ?string
+    public function getNom(): ?string
     {
-        return $this->email;
+        return $this->nom;
     }
 
-    public function setEmail(string $email): static
+    public function setNom(string $nom): static
     {
-        $this->email = $email;
+        $this->nom = $nom;
 
         return $this;
     }
 
     /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
+     * @return Collection<int, Stock>
      */
-    public function getUserIdentifier(): string
+    public function getStocks(): Collection
     {
-        return (string) $this->email;
+        return $this->stocks;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function getRoles(): array
+    public function addStock(Stock $stock): static
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        if (!$this->stocks->contains($stock)) {
+            $this->stocks->add($stock);
+            $stock->setTaille($this);
+        }
 
-        return array_unique($roles);
+        return $this;
     }
 
-    public function setRoles(array $roles): static
+    public function removeStock(Stock $stock): static
     {
-        $this->roles = $roles;
+        if ($this->stocks->removeElement($stock)) {
+            // set the owning side to null (unless already changed)
+            if ($stock->getTaille() === $this) {
+                $stock->setTaille(null);
+            }
+        }
 
         return $this;
     }
 
     /**
-     * @see PasswordAuthenticatedUserInterface
+     * @return Collection<int, CommandeProduit>
      */
-    public function getPassword(): string
+    public function getCommandeProduits(): Collection
     {
-        return $this->password;
+        return $this->commandeProduits;
     }
 
-    public function setPassword(string $password): static
+    public function addCommandeProduit(CommandeProduit $commandeProduit): static
     {
-        $this->password = $password;
+        if (!$this->commandeProduits->contains($commandeProduit)) {
+            $this->commandeProduits->add($commandeProduit);
+            $commandeProduit->setTaille($this);
+        }
 
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function eraseCredentials(): void
+    public function removeCommandeProduit(CommandeProduit $commandeProduit): static
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
-    }
-
-    public function isVerified(): bool
-    {
-        return $this->isVerified;
-    }
-
-    public function setVerified(bool $isVerified): static
-    {
-        $this->isVerified = $isVerified;
+        if ($this->commandeProduits->removeElement($commandeProduit)) {
+            // set the owning side to null (unless already changed)
+            if ($commandeProduit->getTaille() === $this) {
+                $commandeProduit->setTaille(null);
+            }
+        }
 
         return $this;
-    }
-
-    public function setApiToken(string $string)
-    {
     }
 }
