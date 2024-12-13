@@ -1,20 +1,57 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CartController!{% endblock %}
+{% block title %}Votre panier{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    {% include 'partials/navbar.html.twig' %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Votre panier</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        {% if items is empty %}
+            <div class="alert alert-warning" role="alert">
+                Votre panier est vide.
+            </div>
+        {% else %}
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Produit</th>
+                    <th scope="col">Prix</th>
+                    <th scope="col">Quantité</th>
+                    <th scope="col">Sous-total</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.produit.nom }}</td>
+                        <td>{{ item.produit.prix }} €</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.produit.prix * item.quantity }} €</td>
+                        <td>
+                            <a href="{{ path('cart_remove', {'id': item.produit.id}) }}" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash-alt"></i> Supprimer
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="3" class="text-right font-weight-bold">Total :</td>
+                    <td colspan="2" class="font-weight-bold">{{ total }} €</td>
+                </tr>
+                </tfoot>
+            </table>
+            <div class="text-right">
+                <a href="{{ path('create_checkout_session') }}" class="btn btn-success">Commander</a>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/nhduy/stubborn/src/Controller/CartController.php</code></li>
-        <li>Your template at <code>C:/Users/nhduy/stubborn/templates/cart/index.html.twig</code></li>
-    </ul>
-</div>
+
+                <a href="{{ path('boutique') }}" class="btn btn-warning">Contenuer vos achats</a>
+            </div>
+
+        {% endif %}
+    </div>
 {% endblock %}
+
