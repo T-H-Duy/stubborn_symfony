@@ -8,12 +8,12 @@
 
     <div class="container">
         <h1>Stubborn</h1>
-        <p>Bienvenue chez Stubborn, votre destination incontournable pour des sweats de qualité supérieure, alliant style, confort et durabilité. Basée au cœur de Londres, à Piccadilly Circus, notre marque incarne l'esprit urbain et la mode audacieuse.</p>
+        <p>Bienvenue chez Stubborn</p>
     <div class="row">
         {% for produit in produits %}
             <div class="col-md-4">
                 <div class="card mb-4">
-                    <img src="{{ asset('/images/products/'~produit.image) }}" class="card-img-top" alt="{{ produit.nom }}">
+                    <img src="{{ asset('uploads/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.nom }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ produit.nom }}</h5>
                         <p class="card-text">{{ produit.prix|number_format(2, '.', ',') }} €</p>
