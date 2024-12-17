@@ -13,7 +13,7 @@ class ProduitFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         // Créer les tailles
-        $taillesDisponibles = ['S', 'M', 'L', 'XL'];
+        $taillesDisponibles = ['XS', 'S', 'M', 'L', 'XL'];
         $tailles = [];
 
         foreach ($taillesDisponibles as $tailleNom) {
@@ -27,7 +27,7 @@ class ProduitFixtures extends Fixture
         for ($i = 1; $i <= 10; $i++) {
             $produit = new Produit();
             $produit->setNom("Produit $i")
-                ->setImage("produit_$i.jpeg")
+                ->setImage("produit-$i.jpeg")
                 ->setPrix(rand(10, 75));
 
             $manager->persist($produit);
