@@ -22,7 +22,7 @@ class CartController extends AbstractController
         $this->cart = $cart;
     }
 
-    #[isGranted('ROLE_ADMIN')]
+    #[isGranted('ROLE_USER')]
     #[Route('/cart', name: 'cart_index')]
     public function index(): Response
     {
